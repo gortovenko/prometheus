@@ -21,7 +21,7 @@ spec:
       helm:
         values: |
           service:
-            type: LoadBalancer
+            type: ClusterIP
           datasources:
             datasources.yaml:
               apiVersion: 1
