@@ -17,11 +17,11 @@ spec:
         server:
           service:
             type: ClusterIP
-        additionalScrapeConfigs:
-          - job_name: 'wordpress'
-            scrape_interval: 5s
+        scrape_configs:
+          - job_name: 'nginx'
             static_configs:
-              - targets: ['wordpress.kuna-front.svc.cluster.local:9253']
+              - targets: ['nginx-prometheus-exporter.ingress-nginx.svc.cluster.local:9113']
+
   syncPolicy:
     automated:
       prune: true
