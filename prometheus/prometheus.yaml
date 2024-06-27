@@ -3,25 +3,24 @@ kind: Application
 metadata:
   name: prometheus
   namespace: argocd
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
 spec:
   destination:
     namespace: monitoring
     server: https://kubernetes.default.svc
   project: monitoring
-  sources:
-    - repoURL: https://github.com/gortovenko/prometheus.git
-      targetRevision: HEAD
-      ref: prometheus
-    - repoURL: https://prometheus-community.github.io/helm-charts/
-      chart: prometheus
-      targetRevision: 19.7.2
-      helm:
-        values: |
-            server:
-              service:
-                type: ClusterIP
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts/
+    chart: prometheus
+    targetRevision: 19.7.2
+    helm:
+      values: |
+        server:
+          service:
+            type: ClusterIP
+        additionalScrapeConfigs:
+          name: additional-scrape-configs
+          key: additional-scrape-configs.yaml
+
   syncPolicy:
     automated:
       prune: true
