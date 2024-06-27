@@ -3,8 +3,6 @@ kind: Application
 metadata:
   name: prometheus
   namespace: argocd
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
 spec:
   destination:
     namespace: monitoring
@@ -19,12 +17,11 @@ spec:
         server:
           service:
             type: ClusterIP
-          scrape_configs:
-            - job_name: 'wordpress'
-              scrape_interval: 5s
-              static_configs:
-                - targets: ['wordpress.kuna-front.svc.cluster.local:9253']
-
+        additionalScrapeConfigs:
+          - job_name: 'wordpress'
+            scrape_interval: 5s
+            static_configs:
+              - targets: ['wordpress.kuna-front.svc.cluster.local:9253']
   syncPolicy:
     automated:
       prune: true
