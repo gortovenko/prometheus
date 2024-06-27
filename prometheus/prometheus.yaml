@@ -1,44 +1,25 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Application
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
 metadata:
   name: prometheus
-  namespace: argocd
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
+  namespace: monitoring
 spec:
-  destination:
-    namespace: monitoring
-    server: https://kubernetes.default.svc
-  project: monitoring
-  sources:
-    - repoURL: https://github.com/gortovenko/prometheus.git
-      targetRevision: HEAD
-      ref: prometheus
-    - repoURL: https://prometheus-community.github.io/helm-charts/
-      chart: prometheus
-      targetRevision: 19.7.2
-      helm:
-        values: |
-          server:
-            extraScrapeConfigs:
-              - job_name: 'nginx-ingress'
-                metrics_path: /metrics
-                static_configs:
-                  - targets: ['nginx-ingress-controller.ingress-nginx.svc.cluster.local:10254']
-              - job_name: 'wordpress'
-                metrics_path: /metrics
-                static_configs:
-                  - targets: ['wordpress.kuna-front.svc.cluster.local:80']
-              - job_name: 'mysql'
-                metrics_path: /metrics
-                static_configs:
-                  - targets: ['mysql.kuna-back.svc.cluster.local:3306']
-            additionalScrapeConfigs:
-              name: additional-scrape-configs
-              key: additional-scrape-configs.yaml
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
+  serviceAccountName: prometheus
+  serviceMonitorNamespaceSelector: {}
+  serviceMonitorSelector: {}
+  additionalScrapeConfigs:
+    name: additional-scrape-configs
+    key: additional-scrape-configs.yaml
+  extraScrapeConfigs:
+    - job_name: 'nginx-ingress'
+      metrics_path: /metrics
+      static_configs:
+        - targets: ['nginx-ingress-controller.ingress-nginx.svc.cluster.local:10254']
+    - job_name: 'wordpress'
+      metrics_path: /metrics
+      static_configs:
+        - targets: ['wordpress.kuna-front.svc.cluster.local:80']
+    - job_name: 'mysql'
+      metrics_path: /metrics
+      static_configs:
+        - targets: ['mysql.kuna-back.svc.cluster.local:3306']
