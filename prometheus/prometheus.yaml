@@ -3,21 +3,28 @@ kind: Application
 metadata:
   name: prometheus
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   destination:
     namespace: monitoring
     server: https://kubernetes.default.svc
   project: monitoring
-  source:
-    repoURL: https://prometheus-community.github.io/helm-charts/
-    chart: prometheus
-    targetRevision: 19.7.2
-    helm:
-      values: |
-        server:
-          service:
-            type: ClusterIP
-
+  sources:
+    - repoURL: https://github.com/gortovenko/prometheus.git
+      targetRevision: HEAD
+      ref: prometheus
+    - repoURL: https://prometheus-community.github.io/helm-charts/
+      chart: prometheus
+      targetRevision: 19.7.2
+      helm:
+        values: |
+          server:
+            extraScrapeConfigs:
+              - job_name: 'nginx-ingress'
+                metrics_path: /metrics
+                static_configs:
+                  - targets: ['nginx-ingress-controller.ingress-nginx.svc.cluster.local:10254']
   syncPolicy:
     automated:
       prune: true
