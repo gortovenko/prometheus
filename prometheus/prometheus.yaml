@@ -19,11 +19,12 @@ spec:
         server:
           service:
             type: ClusterIP
-          additionalScrapeConfigs:
+          scrape_configs:
             - job_name: 'wordpress'
               scrape_interval: 5s
               static_configs:
-                - targets: ['wordpress.kuna-front.svc.cluster.local:80']
+                - targets: ['wordpress.kuna-front.svc.cluster.local:9253']
+
   syncPolicy:
     automated:
       prune: true
