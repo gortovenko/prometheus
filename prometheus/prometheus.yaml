@@ -10,24 +10,20 @@ spec:
     namespace: monitoring
     server: https://kubernetes.default.svc
   project: monitoring
-  sources:
-    - repoURL: https://github.com/gortovenko/prometheus.git
-      targetRevision: HEAD
-      ref: prometheus
-    - repoURL: https://prometheus-community.github.io/helm-charts/
-      chart: prometheus
-      targetRevision: 19.7.2
-      helm:
-        values: |
-            server:
-              service:
-                type: ClusterIP
-            additionalScrapeConfigs:
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts/
+    chart: prometheus
+    targetRevision: 19.7.2
+    helm:
+      values: |
+        server:
+          service:
+            type: ClusterIP
+          additionalScrapeConfigs:
             - job_name: 'wordpress'
               scrape_interval: 5s
               static_configs:
                 - targets: ['wordpress.kuna-front.svc.cluster.local:80']
-          
   syncPolicy:
     automated:
       prune: true
