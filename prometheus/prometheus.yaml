@@ -17,9 +17,6 @@ spec:
         server:
           service:
             type: ClusterIP
-        additionalScrapeConfigs:
-          name: additional-scrape-configs
-          key: additional-scrape-configs.yaml
 
   syncPolicy:
     automated:
